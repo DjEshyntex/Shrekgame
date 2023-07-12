@@ -1,0 +1,221 @@
+import pygame
+import random
+import pygame.mixer
+# Set up the game screen size
+WIDTH = 800
+HEIGHT = 600
+
+# Colors
+BLACK = (0, 0, 0 )
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+
+# Player properties
+PLAYER_WIDTH = 50
+PLAYER_HEIGHT = 50
+PLAYER_SPEED = 5
+
+# Rock properties
+ROCK_WIDTH = 30
+ROCK_HEIGHT = 30
+ROCK_SPEED = 2
+
+# Initialize Pygame
+pygame.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Shrek falling game")
+clock = pygame.time.Clock()
+
+# Load player image
+player_image = pygame.image.load("player.png")
+player_image = pygame.transform.scale(player_image, (PLAYER_WIDTH, PLAYER_HEIGHT))
+
+# Load rock image
+rock_image = pygame.image.load("rock.png")
+rock_image = pygame.transform.scale(rock_image, (ROCK_WIDTH, ROCK_HEIGHT))
+
+# Initialize player position
+player_x = WIDTH // 2 - PLAYER_WIDTH // 2
+player_y = HEIGHT - PLAYER_HEIGHT - 10
+
+# Initialize the list to store rock positions
+rocks = []
+
+# Function to generate a new rock at the top of the screen
+def generate_rock():
+    x = random.randint(0, WIDTH - ROCK_WIDTH)
+    rocks.append({"x": x, "y": 0})
+
+# Function to draw the player on the screen
+def draw_player():
+    screen.blit(player_image, (player_x, player_y))
+
+
+import pygame.mixer
+
+# ...
+
+# Initialize Pygame mixer
+pygame.mixer.init()
+
+# Load background music
+pygame.mixer.music.load("phon2kspedup.mp3")
+
+# Function to play background music
+def play_background_music():
+    pygame.mixer.music.play(-1)  # -1 to play music on loop
+
+# Main game loop
+def play_game():
+    global score
+
+    game_over = False
+
+    # Play background music
+    play_background_music()
+
+    while not game_over:
+        # Rest of the code...
+
+        # Check if the player dodges a rock
+        check_dodge()
+
+        # Change the background color every 10 points
+        change_background_color()
+
+        # Rest of the code...
+
+        # Generate new rocks
+        if random.random() < 0.02:
+            generate_rock()
+
+        # Rest of the code...
+
+
+
+# Function to draw the rocks on the screen
+def draw_rocks():
+    for rock in rocks:
+        screen.blit(rock_image, (rock["x"], rock["y"]))
+
+# Function to move the player left or right
+def move_player(direction):
+    global player_x
+    if direction == "left" and player_x > 0:
+        player_x -= PLAYER_SPEED
+    elif direction == "right" and player_x < WIDTH - PLAYER_WIDTH:
+        player_x += PLAYER_SPEED
+
+# Main game loop
+# Function to check if the player dodges a rock
+def check_dodge():
+    global score
+    for rock in rocks:
+        if rock["y"] >= HEIGHT - ROCK_HEIGHT:
+            if rock["x"] >= player_x - ROCK_WIDTH and rock["x"] <= player_x + PLAYER_WIDTH:
+                score += 1
+                update_difficulty()
+                rocks.remove(rock)
+
+# Main game loop
+def play_game():
+    global score
+
+    game_over = False
+
+    while not game_over:
+        # Rest of the code...
+
+        # Check if the player dodges a rock
+        check_dodge()
+
+        # Rest of the code...
+
+        # Generate new rocks
+        if random.random() < 0.02:
+            generate_rock()
+
+        # Rest of the code...
+# Colors
+BACKGROUND_COLORS = [(0, 0, 0), (50, 50, 50), (100, 100, 100)]
+
+# ...
+
+# Function to change the background color based on the score
+def change_background_color():
+    index = score // 10
+    if index < len(BACKGROUND_COLORS):
+        screen.fill(BACKGROUND_COLORS[index])
+
+# Main game loop
+def play_game():
+    global score
+
+    game_over = False
+
+    while not game_over:
+        # Rest of the code...
+
+        # Check if the player dodges a rock
+        check_dodge()
+
+        # Change the background color every 10 points
+        change_background_color()
+
+        # Rest of the code...
+
+        # Generate new rocks
+        if random.random() < 0.02:
+            generate_rock()
+
+        # Rest of the code...
+
+
+
+
+def play_game():
+    global rocks  # Declare the variable as global
+
+    game_over = False
+
+    while not game_over:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_over = True
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            move_player("left")
+        elif keys[pygame.K_RIGHT]:
+            move_player("right")
+
+        screen.fill(BLACK)
+
+        # Update rock positions
+        for rock in rocks:
+            rock["y"] += ROCK_SPEED
+
+            # Check collision with the player
+            if rock["y"] + ROCK_HEIGHT >= player_y and rock["y"] <= player_y + PLAYER_HEIGHT:
+                if rock["x"] + ROCK_WIDTH >= player_x and rock["x"] <= player_x + PLAYER_WIDTH:
+                    game_over = True
+
+        # Remove rocks that have gone off the screen
+        rocks = [rock for rock in rocks if rock["y"] <= HEIGHT]
+
+        draw_player()
+        draw_rocks()
+
+        pygame.display.flip()
+        clock.tick(60)
+
+        # Generate new rocks
+        if random.random() < 0.02:
+            generate_rock()
+
+    pygame.quit()
+
+# Start the game
+generate_rock()
+play_game()
+
